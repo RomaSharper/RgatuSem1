@@ -33,8 +33,8 @@ def get_count(r, g, b, last: Color = None):
 
 if __name__ == '__main__':
     try:
-        rgb = get_rgb()
-        count = get_count(*rgb)
+        user_rgb = get_rgb()
+        count = get_count(*user_rgb)
         print(count)
     except ValueError as ve:
         print(ve)
