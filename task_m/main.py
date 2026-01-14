@@ -2,20 +2,21 @@ from typing import List, Optional
 import sys
 from functools import lru_cache
 from task_m.color import Color
-from common.args_parser import get_args
+from common.args_parser import get_args, raise_value_error
 
 MOD = 998244353
 
-def validate_rgb_part(num: int):
-    if num < 1 or num > 10 ** 5:
-        raise ValueError(f"Число {num} вне диапазона 1..10^5")
+
+def validate_count(count: int):
+    if count < 1 or count > 10 ** 5:
+        raise_value_error(f"Число {count} вне диапазона 1..10^5")
 
 
 def validate_rgb(rgb: List[int]) -> List[int]:
     if len(rgb) != 3:
-        raise ValueError(f"Ожидалось три числа, а получено: '{",".join(map(str, rgb))}'")
-    if any(color < 1 or color > 10 ** 5 for color in rgb):
-        raise ValueError(f"Числа {rgb} вне диапазона 1..10^5")
+        raise_value_error(f"Ожидалось три числа, а получено: '{",".join(map(str, rgb))}'")
+    for count in rgb:
+        validate_count(count)
     return rgb
 
 
@@ -26,7 +27,7 @@ def get_rgb_from_input() -> List[int]:
 
 
 def get_rgb_from_argv(argv: List[str]) -> Optional[List[int]]:
-    return get_args(argv, "/rgb", mapper=int, validator=validate_rgb_part)
+    return get_args(argv, "/rgb", mapper=int, validator=validate_count)
 
 @lru_cache(maxsize=None)
 def get_count(r, g, b, last: Color = None):

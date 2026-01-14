@@ -1,5 +1,7 @@
 from typing import List, Callable, Optional, Any
 
+RED_END = '\033[0m'
+RED_START = '\033[91m'
 
 def get_args(args: List[str], request_flag: str,
              validator: Optional[Callable] = None,
@@ -32,20 +34,25 @@ def get_args(args: List[str], request_flag: str,
     items: List[Any] = []
     for part in parts:
         try:
-            # 1. Маппер (если есть)
+            # 1. Маппер (опционально)
             value = mapper(part) if mapper else part
 
-            # 2. Валидатор (если есть) — работает с результатом маппера
+            # 2. Валидатор (опционально)
             if validator:
                 validator(value)
 
             items.append(value)
         except (ValueError, TypeError) as e:
-            if debug:
-                print(f"[{request_flag}] Ошибка '{part}' → {value}")
-                return None
-            raise ValueError(f"[{request_flag}] {e}")
+            error = f"[{request_flag}] {e}"
+            if not debug:
+                raise_value_error(error)
+            print(RED_START, error, RED_END)
+            return None
 
     if debug:
-        print(f"[{request_flag}] ✓ {items}")
+        print(f"[{request_flag}] Успех: {items}")
     return items
+
+
+def raise_value_error(message: str):
+    raise ValueError(f"{RED_START} {message} {RED_END}")
