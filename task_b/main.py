@@ -28,7 +28,8 @@ def get_count() -> int:
 
 
 def check_format(text: str) -> None:
-    if not MIN_DATA_LEN <= len(text) <= MAX_DATA_LEN:
+    length = len(text)
+    if length < MIN_DATA_LEN or length > MAX_DATA_LEN:
         raise ValueError(WRONG_DATA_LEN_ERROR_MSG.format(text))
     if not all(char in ALPHABET for char in text):
         raise ValueError(WRONG_DATA_FORMAT_ERROR_MSG.format(text))
