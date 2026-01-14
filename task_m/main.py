@@ -11,7 +11,7 @@ def get_rgb() -> List[int]:
     if len(rgb) != 3:
         raise ValueError(f"Ожидалось три числа, а получено: \"{data}\"")
     if any(color < 1 or color > 10**5 for color in rgb):
-        raise ValueError(f"Все числа должны быть > 1 и < 10**5")
+        raise ValueError("Все числа должны быть > 1 и < 10**5")
     return rgb
 
 
