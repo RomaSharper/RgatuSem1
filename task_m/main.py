@@ -17,7 +17,7 @@ def to_number(num: str) -> int:
 
 def get_rgb() -> List[int]:
     data = input().strip()
-    rgb = list(map(to_number, data.split(",")))
+    rgb = list(map(to_number, data.split(" ")))
     length = len(rgb)
     if length != 3:
         raise ValueError(f"Ожидалось 3 числа, а получено {length}")
