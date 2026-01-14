@@ -1,7 +1,8 @@
-from typing import List
+from typing import List, Optional
 import sys
 
-from const import (
+from common.args_parser import get_args
+from task_b.const import (
     MIN_COUNT,
     DOT,
     ROWS_COUNT,
@@ -46,34 +47,8 @@ def get_items_from_input(count: int) -> List[str]:
     return items
 
 
-def parse_items_arg(raw: str) -> List[str]:
-    raw = raw.strip()
-    if not (raw.startswith("[") and raw.endswith("]")):
-        raise ValueError(f"Неверный формат /items: \"{raw}\"")
-
-    inner = raw[1 : -1].strip()
-    if not inner:
-        return []
-
-    parts = [part.strip() for part in inner.split(",")]
-    items: List[str] = []
-    for part in parts:
-        check_format(part)
-        items.append(part)
-    return items
-
-
-def get_items_from_argv(argv: List[str]) -> List[str] | None:
-    if len(argv) < 3:
-        return None
-
-    for i, arg in enumerate(argv):
-        if arg == "/items":
-            if i + 1 >= len(argv):
-                raise ValueError("Не переданы параметры через /items \"[]\"")
-            raw_items = argv[i + 1]
-            return parse_items_arg(raw_items)
-    return None
+def get_items_from_argv(argv: List[str]) -> Optional[List[str]]:
+    return get_args(argv, "/items", debug=True)
 
 
 def get_prog_matrix(items: List[str]) -> List[List[str]]:
@@ -101,14 +76,7 @@ def print_prog_matrix(matrix: List[List[str]]) -> None:
 def main() -> None:
     argv = sys.argv
     try:
-        items = get_items_from_argv(argv)
-        if items is None:
-            user_count = get_count()
-            items = get_items_from_input(user_count)
-            print()
-        else:
-            print("Переданные параметры:", items)
-
+        items = get_items_from_argv(argv) or get_items_from_input(get_count())
         prog_matrix = get_prog_matrix(items)
         print_prog_matrix(prog_matrix)
         print()

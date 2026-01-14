@@ -1,19 +1,32 @@
-from typing import List
+from typing import List, Optional
+import sys
 from functools import lru_cache
-from color import Color
+from task_m.color import Color
+from common.args_parser import get_args
 
 MOD = 998244353
 
+def validate_rgb_part(num: int):
+    if num < 1 or num > 10 ** 5:
+        raise ValueError(f"Число {num} вне диапазона 1..10^5")
 
-def get_rgb() -> List[int]:
-    data = input()
-    rgb = list(map(int, data.split()))
+
+def validate_rgb(rgb: List[int]) -> List[int]:
     if len(rgb) != 3:
-        raise ValueError(f"Ожидалось три числа, а получено: \"{data}\"")
-    if any(color < 1 or color > 10**5 for color in rgb):
+        raise ValueError(f"Ожидалось три числа, а получено: '{",".join(map(str, rgb))}'")
+    if any(color < 1 or color > 10 ** 5 for color in rgb):
         raise ValueError("Все числа должны быть > 1 и < 10**5")
     return rgb
 
+
+def get_rgb_from_input() -> List[int]:
+    data = input("Количество шариков (red, green, blue): ").strip()
+    rgb = list(map(int, data.split(",")))
+    return validate_rgb(rgb)
+
+
+def get_rgb_from_argv(argv: List[str]) -> Optional[List[int]]:
+    return get_args(argv, "/rgb", mapper=int, validator=validate_rgb_part)
 
 @lru_cache(maxsize=None)
 def get_count(r, g, b, last: Color = None):
@@ -31,10 +44,14 @@ def get_count(r, g, b, last: Color = None):
     return res % MOD
 
 
-if __name__ == '__main__':
+def main() -> None:
     try:
-        user_rgb = get_rgb()
-        count = get_count(*user_rgb)
+        rgb = get_rgb_from_argv(sys.argv) or get_rgb_from_input()
+        count = get_count(*rgb)
         print(count)
     except ValueError as ve:
         print(ve)
+
+
+if __name__ == "__main__":
+    main()
