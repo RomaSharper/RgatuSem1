@@ -48,7 +48,7 @@ def get_items_from_input(count: int) -> List[str]:
 
 
 def get_items_from_argv(argv: List[str]) -> Optional[List[str]]:
-    return get_args(argv, "/items", debug=True)
+    return get_args(argv, "/items")
 
 
 def get_prog_matrix(items: List[str]) -> List[List[str]]:

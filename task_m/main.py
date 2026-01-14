@@ -15,7 +15,7 @@ def validate_rgb(rgb: List[int]) -> List[int]:
     if len(rgb) != 3:
         raise ValueError(f"Ожидалось три числа, а получено: '{",".join(map(str, rgb))}'")
     if any(color < 1 or color > 10 ** 5 for color in rgb):
-        raise ValueError("Все числа должны быть > 1 и < 10**5")
+        raise ValueError(f"Числа {rgb} вне диапазона 1..10^5")
     return rgb
 
 

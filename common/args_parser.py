@@ -40,10 +40,11 @@ def get_args(args: List[str], request_flag: str,
                 validator(value)
 
             items.append(value)
-        except (ValueError, TypeError):
+        except (ValueError, TypeError) as e:
             if debug:
                 print(f"[{request_flag}] Ошибка '{part}' → {value}")
-            return None
+                return None
+            raise ValueError(f"[{request_flag}] {e}")
 
     if debug:
         print(f"[{request_flag}] ✓ {items}")
