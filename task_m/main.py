@@ -5,13 +5,22 @@ from color import Color
 MOD = 998244353
 
 
+def to_number(num: str) -> int:
+    num = num.strip()
+    if not num.removeprefix("-").isnumeric():
+        raise ValueError(f"Ожидалось число, а получено: '{num}'")
+    num = int(num)
+    if num < 1 or num > 10 ** 5:
+        raise ValueError(f"Число должно быть в диапазоне 1..10^5, а получено: {num}")
+    return num
+
+
 def get_rgb() -> List[int]:
-    data = input()
-    rgb = list(map(int, data.split()))
-    if len(rgb) != 3:
-        raise ValueError(f"Ожидалось три числа, а получено: \"{data}\"")
-    if any(color < 1 or color > 10**5 for color in rgb):
-        raise ValueError("Все числа должны быть > 1 и < 10**5")
+    data = input().strip()
+    rgb = list(map(to_number, data.split(",")))
+    length = len(rgb)
+    if length != 3:
+        raise ValueError(f"Ожидалось 3 числа, а получено {length}")
     return rgb
 
 
@@ -31,10 +40,16 @@ def get_count(r, g, b, last: Color = None):
     return res % MOD
 
 
-if __name__ == '__main__':
+def main() -> None:
     try:
+        print("Ввод:")
         user_rgb = get_rgb()
-        count = get_count(*user_rgb)
-        print(count)
+        print("\nВывод:")
+        print(get_count(*user_rgb))
     except ValueError as ve:
+        print("\nОшибка:")
         print(ve)
+
+
+if __name__ == '__main__':
+    main()

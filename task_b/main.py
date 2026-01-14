@@ -1,5 +1,4 @@
 from typing import List
-import sys
 
 from const import (
     MIN_COUNT,
@@ -19,25 +18,23 @@ from const import (
 
 
 def get_count() -> int:
-    count = input("Количество: ").strip()
+    count = input().strip()
     if not count.isnumeric():
         raise ValueError(WRONG_NUMBER_MSG.format(count))
-    count_int = int(count)
-    if not MIN_COUNT <= count_int <= MAX_COUNT:
-        raise ValueError(WRONG_RANGE_MSG.format(count_int))
-    return count_int
+    count = int(count)
+    if not MIN_COUNT <= count <= MAX_COUNT:
+        raise ValueError(WRONG_RANGE_MSG.format(count))
+    return count
 
 
 def check_format(text: str) -> None:
-    if not (MIN_DATA_LEN <= len(text) <= MAX_DATA_LEN):
+    if not MIN_DATA_LEN <= len(text) <= MAX_DATA_LEN:
         raise ValueError(WRONG_DATA_LEN_ERROR_MSG.format(text))
-
-    if not text or not all(char in ALPHABET for char in text):
+    if not all(char in ALPHABET for char in text):
         raise ValueError(WRONG_DATA_FORMAT_ERROR_MSG.format(text))
 
 
 def get_items_from_input(count: int) -> List[str]:
-    print("Ввод параметров:")
     items: List[str] = []
     for _ in range(count):
         input_data = input().strip()
@@ -46,73 +43,34 @@ def get_items_from_input(count: int) -> List[str]:
     return items
 
 
-def parse_items_arg(raw: str) -> List[str]:
-    raw = raw.strip()
-    if not (raw.startswith("[") and raw.endswith("]")):
-        raise ValueError(f"Неверный формат /items: \"{raw}\"")
-
-    inner = raw[1 : -1].strip()
-    if not inner:
-        return []
-
-    parts = [part.strip() for part in inner.split(",")]
-    items: List[str] = []
-    for part in parts:
-        check_format(part)
-        items.append(part)
-    return items
-
-
-def get_items_from_argv(argv: List[str]) -> List[str] | None:
-    if len(argv) < 3:
-        return None
-
-    for i, arg in enumerate(argv):
-        if arg == "/items":
-            if i + 1 >= len(argv):
-                raise ValueError("Не переданы параметры через /items \"[]\"")
-            raw_items = argv[i + 1]
-            return parse_items_arg(raw_items)
-    return None
-
-
 def get_prog_matrix(items: List[str]) -> List[List[str]]:
     first_letters = {item[0] for item in items}
-    prog_list = [char if char in first_letters else DOT for char in ALPHABET]
-
-    while len(prog_list) < ROWS_COUNT * COLS_COUNT:
-        prog_list.append(SPACE)
 
     prog_matrix: List[List[str]] = []
     for i in range(ROWS_COUNT):
-        row = prog_list[i * COLS_COUNT : (i + 1) * COLS_COUNT]
+        row = []
+        for j in range(COLS_COUNT):
+            index = i * COLS_COUNT + j
+            if index < len(ALPHABET):
+                char = ALPHABET[index]
+                row.append(char if char in first_letters else DOT)
         prog_matrix.append(row)
 
     return prog_matrix
 
-
 def print_prog_matrix(matrix: List[List[str]]) -> None:
     for row in matrix:
-        for col in row:
-            print(col, end=SPACE)
-        print()
+        print(SPACE.join(row))
 
 
 def main() -> None:
-    argv = sys.argv
     try:
-        items = get_items_from_argv(argv)
-        if items is None:
-            user_count = get_count()
-            items = get_items_from_input(user_count)
-            print()
-        else:
-            print("Переданные параметры:", items)
-
-        prog_matrix = get_prog_matrix(items)
-        print_prog_matrix(prog_matrix)
-        print()
+        print("Ввод:")
+        items = get_items_from_input(get_count())
+        print("\nВывод:")
+        print_prog_matrix(get_prog_matrix(items))
     except ValueError as ve:
+        print("\nОшибка:")
         print(ve)
 
 
